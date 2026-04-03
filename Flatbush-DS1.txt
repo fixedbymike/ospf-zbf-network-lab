@@ -1,0 +1,168 @@
+Building configuration...
+
+Current configuration : 2947 bytes
+!
+! Last configuration change at 03:35:43 EDT Thu Apr 2 2026 by admin
+! NVRAM config last updated at 04:10:44 EDT Thu Apr 2 2026 by admin
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec localtime
+service password-encryption
+service compress-config
+!
+hostname Flatbush-DS1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$qxW8$7fPt3Z.CW5biKVadAJdPb.
+!
+username admin privilege 15 secret 5 $1$RLnh$lGIXmjC.bqw0D00/EL4771
+no aaa new-model
+clock timezone EDT -5 0
+clock summer-time EDT recurring
+!
+!
+!
+!
+!
+!
+!
+!
+ip dhcp snooping vlan 10,50,100
+no ip dhcp snooping information option
+no ip domain-lookup
+ip domain-name brooklyn.local
+ip cef
+no ipv6 cef
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+spanning-tree vlan 10,50,100 priority 4096
+!
+!
+track 1 interface Ethernet0/0 line-protocol
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.100.3 255.255.255.255
+!
+interface Port-channel1
+ no switchport
+ no ip address
+!
+interface Ethernet0/0
+ description TO_FLATBUSH-CR1
+ no switchport
+ ip address 10.0.0.10 255.255.255.252
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 7 112B0B0A181907150A787B767E
+!
+interface Ethernet0/1
+ no switchport
+ ip address 192.168.153.10 255.255.255.0
+!
+interface Ethernet0/2
+ switchport trunk allowed vlan 10,100
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport mode trunk
+ switchport nonegotiate
+!
+interface Ethernet0/3
+ switchport trunk allowed vlan 10,100
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 999
+ switchport mode trunk
+ switchport nonegotiate
+!
+interface Ethernet1/0
+ no switchport
+ no ip address
+ channel-group 1 mode active
+!
+interface Ethernet1/1
+ switchport trunk allowed vlan 10,50,100
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport nonegotiate
+!
+interface Ethernet1/2
+ no switchport
+ no ip address
+ channel-group 1 mode active
+!
+interface Ethernet1/3
+!
+interface Vlan10
+ ip address 10.10.10.2 255.255.255.0
+ ip helper-address 10.0.0.9 
+ standby version 2
+ standby 10 ip 10.10.10.1
+ standby 10 priority 110
+ standby 10 preempt
+ standby 10 track 1 decrement 30
+!
+interface Vlan50
+ no ip address
+ shutdown
+!
+interface Vlan100
+ no ip address
+ shutdown
+!
+router ospf 1
+ router-id 192.168.100.3
+ passive-interface Vlan10
+ network 10.0.0.8 0.0.0.3 area 0
+ network 10.10.10.0 0.0.0.255 area 0
+ network 192.168.100.3 0.0.0.0 area 0
+!
+ip forward-protocol nd
+!
+ip http server
+ip http secure-server
+!
+ip route 0.0.0.0 0.0.0.0 10.0.0.9
+ip ssh version 2
+ip ssh server algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+ip ssh client algorithm encryption aes128-ctr aes192-ctr aes256-ctr
+!
+!
+logging host 10.100.100.10
+!
+!
+!
+control-plane
+!
+!
+line con 0
+ password 7 14141B180F0B
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ login local
+ transport input ssh
+!
+ntp source Ethernet0/0
+ntp server 10.0.0.33
+!
+!
+end

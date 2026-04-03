@@ -1,0 +1,221 @@
+Building configuration...
+
+  
+Current configuration : 5342 bytes
+!
+! Last configuration change at 02:09:54 EDT Thu Apr 2 2026 by admin
+! NVRAM config last updated at 02:36:54 EDT Thu Apr 2 2026 by admin
+!
+version 15.9
+service timestamps debug datetime msec
+service timestamps log datetime msec localtime
+service password-encryption
+!
+hostname Flatbush-CR
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 9 $9$OTsC/niSMmPil9$tAAF7HLUJ5bQGj26Y3OLNgAhWbeYufHhMadc0RczO8Q
+!
+no aaa new-model
+!
+!
+!
+clock timezone EST 0 0
+clock summer-time EDT recurring
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+ip dhcp excluded-address 10.10.10.1 10.10.10.10
+!
+ip dhcp pool VLAN10-FLATBUSH
+ network 10.10.10.0 255.255.255.0
+ default-router 10.10.10.1 
+ dns-server 8.8.8.8 
+!
+!
+!
+no ip domain lookup
+ip domain name brooklyn.local
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+username admin privilege 15 secret 9 $9$SmDdwLUP0pYUHf$ieEMEWDunsjUIcyoJfy1s/nd79jMyDx2O2M1AWw0thk
+!
+redundancy
+!
+!
+track 1 ip sla 1 reachability
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.100.1 255.255.255.255
+!
+interface GigabitEthernet0/0
+ description TO_BROOKLYN-FW
+ ip address 10.0.0.33 255.255.255.252
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/1
+ description TO_DUMBO-CR1
+ ip address 10.0.0.5 255.255.255.252
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/2
+ description TO_FLATBUSH-DS1
+ ip address 10.0.0.9 255.255.255.252
+ ip access-group FLATBUSH-IN in
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 7 1327051D040708332576786163
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/3
+ description TO_FLATBUSH-DS2
+ ip address 10.0.0.13 255.255.255.252
+ ip access-group FLATBUSH-IN in
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 7 153019030B21273D2661657045
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/4
+ no ip address
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/5
+ ip address 192.168.153.101 255.255.255.0
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/6
+ no ip address
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/7
+ no ip address
+ duplex auto
+ speed auto
+ media-type rj45
+!
+router ospf 1
+ router-id 192.168.100.1
+ passive-interface GigabitEthernet0/1
+ network 10.0.0.4 0.0.0.3 area 0
+ network 10.0.0.8 0.0.0.3 area 0
+ network 10.0.0.12 0.0.0.3 area 0
+ network 10.0.0.32 0.0.0.3 area 0
+ network 192.168.100.1 0.0.0.0 area 0
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 10.0.0.34 track 1
+ip route 0.0.0.0 0.0.0.0 10.0.0.6 254
+ip ssh version 2
+!
+ip access-list extended FLATBUSH-IN
+ permit ospf any any
+ permit ip 10.0.0.8 0.0.0.3 any
+ permit ip 10.0.0.32 0.0.0.3 any
+ permit ip 10.0.0.12 0.0.0.3 any
+ permit ip 10.10.10.0 0.0.0.255 10.50.50.0 0.0.0.255
+ permit ip 10.10.10.0 0.0.0.255 10.100.100.0 0.0.0.255
+ permit ip 192.168.100.0 0.0.0.255 any
+ permit ip 10.10.10.0 0.0.0.255 any
+ deny   ip any any log
+!
+ip sla 1
+ icmp-echo 10.0.0.34 source-interface GigabitEthernet0/0
+ frequency 5
+ip sla schedule 1 life forever start-time now
+logging host 10.100.100.10
+ipv6 ioam timestamp
+!
+!
+!
+control-plane
+!
+banner exec ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner incoming ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner login ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+!
+line con 0
+ password 7 094F471A1A0A
+ login
+line aux 0
+line vty 0 4
+ login local
+ transport input ssh
+!
+no scheduler allocate
+ntp source GigabitEthernet0/5
+ntp update-calendar
+ntp server 192.168.153.1
+!
+end

@@ -1,0 +1,233 @@
+Building configuration...
+
+  
+Current configuration : 5639 bytes
+!
+! Last configuration change at 02:33:35 EDT Thu Apr 2 2026 by admin
+! NVRAM config last updated at 02:40:53 EDT Thu Apr 2 2026 by admin
+!
+version 15.9
+service timestamps debug datetime msec
+service timestamps log datetime msec localtime
+service password-encryption
+!
+hostname Canarsie-CR
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 9 $9$MHEQbiE4S4TtDP$DLo8S92VXjsoRYSsGNfp2nWOjl85doHQe/CIDBKVTVg
+!
+no aaa new-model
+!
+!
+!
+clock timezone EST 0 0
+clock summer-time EDT recurring
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+ip dhcp excluded-address 10.50.50.1 10.50.50.10
+ip dhcp excluded-address 10.100.100.1 10.100.100.10
+!
+ip dhcp pool VLAN50-DUMBO
+ network 10.50.50.0 255.255.255.0
+ default-router 10.50.50.1 
+ dns-server 8.8.8.8 
+!
+ip dhcp pool VLAN100-DUMBO
+ network 10.100.100.0 255.255.255.0
+ default-router 10.100.100.1 
+ dns-server 8.8.8.8 
+!
+!
+!
+no ip domain lookup
+ip domain name brooklyn.local
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+username admin privilege 15 secret 9 $9$zUr/Aqc1JNy37f$H.mu9I6Yk5OVc2CxsVeYtpaff6AxOoMcnONfw8CMI0c
+!
+redundancy
+!
+!
+track 1 ip sla 1 reachability
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 192.168.100.7 255.255.255.255
+!
+interface GigabitEthernet0/0
+ description TO_BROOKLYN-FW
+ ip address 10.0.0.37 255.255.255.252
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/1
+ description TO_FLATBUSH-CR1
+ ip address 10.0.0.6 255.255.255.252
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/2
+ description TO_DUMBO-DS2
+ ip address 10.0.0.21 255.255.255.252
+ ip access-group DUMBO-IN in
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 7 052914002E474210175747405D
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/3
+ description TO_DUMBO-DS1
+ ip address 10.0.0.17 255.255.255.252
+ ip access-group DUMBO-IN in
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 7 14350004030F26322A7A636774
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/4
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/5
+ ip address 192.168.153.102 255.255.255.0
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/6
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+ media-type rj45
+!
+interface GigabitEthernet0/7
+ no ip address
+ shutdown
+ duplex auto
+ speed auto
+ media-type rj45
+!
+router ospf 1
+ router-id 192.168.100.7
+ area 10 range 10.50.50.0 255.255.255.0
+ area 10 range 10.100.100.0 255.255.255.0
+ passive-interface GigabitEthernet0/1
+ network 10.0.0.4 0.0.0.3 area 0
+ network 10.0.0.16 0.0.0.3 area 10
+ network 10.0.0.20 0.0.0.3 area 10
+ network 10.0.0.36 0.0.0.3 area 0
+ network 192.168.100.7 0.0.0.0 area 0
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 10.0.0.38 track 1
+ip route 0.0.0.0 0.0.0.0 10.0.0.5 254
+ip ssh version 2
+!
+ip access-list extended DUMBO-IN
+ permit ospf any any
+ permit ip 10.50.50.0 0.0.0.255 10.10.10.0 0.0.0.255
+ permit ip 10.100.100.0 0.0.0.255 10.10.10.0 0.0.0.255
+ permit ip 192.168.100.0 0.0.0.255 any
+ permit ip 10.0.0.16 0.0.0.3 any
+ permit ip 10.0.0.20 0.0.0.3 any
+ permit ip 10.0.0.36 0.0.0.3 any
+ permit ip 10.50.50.0 0.0.0.255 any
+ permit ip 10.100.100.0 0.0.0.255 any
+ deny   ip any any log
+!
+ip sla 1
+ icmp-echo 10.0.0.38 source-interface GigabitEthernet0/0
+ frequency 5
+ip sla schedule 1 life forever start-time now
+logging host 10.100.100.10
+ipv6 ioam timestamp
+!
+!
+!
+control-plane
+!
+banner exec ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner incoming ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+banner login ^C
+**************************************************************************
+* IOSv is strictly limited to use for evaluation, demonstration and IOS  *
+* education. IOSv is provided as-is and is not supported by Cisco's      *
+* Technical Advisory Center. Any use or disclosure, in whole or in part, *
+* of the IOSv Software or Documentation to any third party for any       *
+* purposes is expressly prohibited except as otherwise authorized by     *
+* Cisco in writing.                                                      *
+**************************************************************************^C
+!
+line con 0
+ password 7 070C285F4D06
+ login
+line aux 0
+line vty 0 4
+ login local
+ transport input ssh
+!
+no scheduler allocate
+ntp source GigabitEthernet0/0
+ntp master 2
+ntp server 10.0.0.33
+!
+end
