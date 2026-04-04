@@ -20,7 +20,7 @@ Dual-site enterprise network lab built in EVE-NG Pro covering OSPF multi-area, F
 * DHCP with centralized pools and helper-addresses forwarding across both sites.
 * Extended ACLs on both core routers with centralized syslog to a dedicated Linux server.
 * EtherChannel LACP configured on all distribution switches and PVST+ with root bridge set at the distribution layer.
-* PortFast and BPDU Guard on all access ports, and native VLAN 999 with DTP disabled across all trunks.
+* PortFast and BPDU Guard on all access ports, and native VLAN with DTP disabled across all trunks.
 * Netmiko automation for bulk config deployment across all 12 devices.
 
 ## Device Inventory
