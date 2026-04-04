@@ -4,7 +4,7 @@ Dual-site enterprise network lab built in EVE-NG Pro covering OSPF multi-area, F
 
 ## Topology
 
-Topology.png
+![Topology](Topology.png)
 
 - **Site A — Flatbush:** OSPF Area 0 (Backbone)
 - **Site B — Canarsie:** OSPF Area 10 (Stub)
